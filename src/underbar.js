@@ -8,7 +8,7 @@
   // iterator when the user does not pass one in, this will be handy.
   _.identity = function(val) {
    return val;
-   
+
   };
 
   /**
@@ -141,6 +141,10 @@
    
   };
 
+ 
+
+
+
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
@@ -227,12 +231,34 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    return _.reduce(collection, function (everyTrue, item) {
+      if (!everyTrue) {
+        return false;
+      }
+      if (iterator(item)) {
+        return true;
+      }
+      return false;
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    return !_.every(collection, function (item) {
+      if (iterator(item)) {
+        return false;
+      }
+      return true;
+
+    })
   };
 
 
@@ -255,11 +281,27 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var mainObj = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      for (var j in arguments[i]) {
+        mainObj[j] = arguments[i][j];
+      }
+    }
+    return mainObj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var mainObj = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      for (var j in arguments[i]) {
+        if (mainObj[j] === undefined) {
+          mainObj[j] = arguments[i][j];
+        }
+      }
+    }
+    return mainObj;
   };
 
 
@@ -312,6 +354,10 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return setTimeout(function () {
+      return func.apply(this, args);
+    }, wait);
   };
 
 
@@ -326,6 +372,14 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var newArr = array.slice();
+    for (var i = newArr.length - 1; i > 0; i--) {
+      var randNum = Math.floor(Math.random() * i);
+      var temp = newArr[i];
+      newArr[i] = newArr[randNum];
+      newArr[randNum] = temp;
+    }
+    return newArr;
   };
 
 
