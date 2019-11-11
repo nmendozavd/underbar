@@ -141,10 +141,6 @@
    
   };
 
- 
-
-
-
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
@@ -319,6 +315,7 @@
     // TIP: These variables are stored in a "closure scope" (worth researching),
     // so that they'll remain available to the newly-generated function every
     // time it's called.
+    // closure
     var alreadyCalled = false;
     var result;
 
@@ -345,7 +342,19 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //closure
+    var storingObject = {};
+
+    return function () {
+      if (storingObject[JSON.stringify(arguments)]) {
+        return storingObject[JSON.stringify(arguments)];
+      } else {
+        storingObject[JSON.stringify(arguments)] = func.apply(this, arguments);
+        return storingObject[JSON.stringify(arguments)];
+      }
+    };
   };
+
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
